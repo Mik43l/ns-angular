@@ -1,0 +1,207 @@
+<div class="d-flex min-vh-100 position-relative overflow-hidden">
+  <!-- Animated Background -->
+  <div
+    class="bg-gradient position-absolute top-0 start-0 w-100 h-100"
+    style="
+      background: linear-gradient(
+        -45deg,
+        #1e3c72 0%,
+        #2a5298 25%,
+        #667eea 50%,
+        #764ba2 75%,
+        #f093fb 100%
+      );
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      z-index: -1;
+    "
+  ></div>
+
+  <!-- Mobile Header -->
+  <header
+    class="d-lg-none position-fixed top-0 start-0 w-100 px-3 py-2 z-3"
+    style="background: rgba(30, 60, 114, 0.98); backdrop-filter: blur(20px)"
+  >
+    <div class="d-flex justify-content-between align-items-center">
+      <button class="btn btn-link text-white p-0 me-2" (click)="sidebarOpen = !sidebarOpen">
+        <i class="fas fa-bars fa-lg"></i>
+      </button>
+      <span class="text-white fw-semibold flex-grow-1 text-center">
+        {{ user?.name || user?.email || 'Dashboard' }}
+      </span>
+      <button class="btn btn-link text-white p-0 ms-2" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Sidebar RESPONSIVE -->
+  <nav
+    class="sidebar shadow-lg border-end position-fixed h-100 p-4 z-2"
+    [class.sidebar-mobile-open]="sidebarOpen"
+    style="
+      width: 260px;
+      background: rgba(30, 60, 114, 0.95);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    "
+  >
+    <!-- Chiudi mobile -->
+    <div class="d-flex justify-content-end d-lg-none mb-3">
+      <button class="btn btn-sm btn-outline-light" (click)="sidebarOpen = false">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    @if(user) {
+    <div class="text-white mb-5 pb-3 border-bottom border-white border-opacity-25">
+      <h4 class="h5 fw-bold mb-2 text-center" style="text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3)">
+        <i class="fas fa-user-circle me-2"></i>
+        {{ user.name || user.email }}
+      </h4>
+      <p class="mb-0 text-white-50 text-center small fw-medium">Dashboard personale</p>
+    </div>
+    }
+
+    <ul class="nav nav-pills flex-column gap-2 mb-5">
+      <li class="nav-item">
+        <a
+          class="nav-link text-white px-4 py-3 rounded-3 active-link"
+          routerLink="calendar"
+          routerLinkActive="active"
+        >
+          <i class="fas fa-calendar-alt me-3"></i><span>Calendario</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white px-4 py-3 rounded-3 active-link"
+          routerLink="profile"
+          routerLinkActive="active"
+        >
+          <i class="fas fa-user me-3"></i><span>Profilo</span>
+        </a>
+      </li>
+      @if (isAdmin()) {
+      <li class="nav-item">
+        <div
+          class="d-flex align-items-center px-4 py-3 rounded-3 fw-semibold nav-link-wrapper text-white active-link"
+          [routerLink]="['users']"
+          routerLinkActive="active"
+        >
+          <i class="fas fa-users me-3 flex-shrink-0"></i>
+          <span class="flex-grow-1">Utenti</span>
+          <span class="badge rounded-pill bg-danger shadow ms-3" style="font-size: 0.7rem"
+            >ADMIN</span
+          >
+        </div>
+      </li>
+      }
+    </ul>
+
+    <button
+      class="btn btn-danger w-100 py-3 fw-semibold rounded-3 shadow border-0 logout-btn"
+      (click)="logout()"
+    >
+      <i class="fas fa-sign-out-alt me-2"></i>Esci
+    </button>
+  </nav>
+
+  <!-- Main Content - WIDTH DINAMICA -->
+  <main class="flex-grow-1 main-content">
+    <div class="content-wrapper d-flex flex-column h-100 w-100">
+      @if(user) {
+      <div class="card border-0 shadow-xl rounded-4 overflow-hidden flex-grow-1 content-card">
+        <div class="card-body p-4 p-lg-5 d-flex flex-column h-100 w-100">
+          <router-outlet [routerOutletData]="{ isAdmin: isAdmin() }"></router-outlet>
+        </div>
+      </div>
+      }
+    </div>
+  </main>
+</div>
+
+<style>
+  @keyframes gradientShift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .active-link {
+    background: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .active-link.active {
+    background: rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .logout-btn {
+    background: #dc3545 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4) !important;
+  }
+
+  .content-card {
+    background: #ffffff !important;
+    /* border: 1px solid rgba(102, 126, 234, 0.3) !important; */
+    transform: translateY(-3px) !important;
+    /* box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12) !important; */
+    min-height: 70vh;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 991.98px) {
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.sidebar-mobile-open {
+      transform: translateX(0);
+    }
+
+    .main-content {
+      margin-left: 0 !important;
+      padding-top: 70px !important; /* spazio per header mobile */
+      width: 100vw !important;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .sidebar {
+      transform: translateX(0) !important;
+    }
+
+    .main-content {
+      margin-left: 260px !important;
+      width: calc(100vw - 260px) !important;
+    }
+  }
+
+  /* Full width per router-outlet */
+  :host ::ng-deep router-outlet + * {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  :host ::ng-deep .fc {
+    width: 100% !important;
+  }
+
+  .nav-link-wrapper {
+    cursor: pointer !important;
+  }
+
+  /* Bonus: hover effect per tutti i link della sidebar */
+  .nav-link:hover,
+  .nav-link-wrapper:hover {
+    transform: translateX(5px) !important;
+  }
+</style>

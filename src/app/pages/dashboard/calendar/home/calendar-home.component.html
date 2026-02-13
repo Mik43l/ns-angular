@@ -1,0 +1,154 @@
+<div class="d-flex justify-content-between align-items-center mb-4 position-relative">
+  <!-- Icona grande centrata -->
+  <div class="calendar-icon-wrapper text-center flex-grow-1">
+    <div class="icon-circle bg-primary bg-gradient shadow-lg">
+      <i class="fas fa-calendar-alt fa-2x text-white"></i>
+    </div>
+  </div>
+
+  <!-- Filtro migliorato con badge count -->
+  <div class="filter-section ms-3">
+    <div
+      class="input-group input-group-lg shadow-lg border-0 rounded-4"
+      style="
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+      "
+    >
+      <!-- Icona filtro -->
+      <span class="input-group-text bg-transparent border-0 px-3 text-primary">
+        <i class="fas fa-filter"></i>
+      </span>
+
+      <!-- Select migliorato -->
+      <select
+        class="form-select bg-transparent border-0 px-4 py-2 status-filter"
+        [(ngModel)]="selectedStatus"
+        (change)="reloadEvents()"
+        style="font-weight: 600; font-size: 0.95rem; min-width: 200px"
+      >
+        <option value="ALL">Tutti gli eventi</option>
+        <option value="PENDING">⏳ In Attesa</option>
+        <option value="APPROVED">✅ Approvati</option>
+        <option value="CANCELLED">❌ Cancellati</option>
+        <option value="REJECTED">🚫 Rifiutati</option>
+      </select>
+
+      <!-- Badge count (esempio) -->
+      <span class="input-group-text bg-transparent border-0 px-2 badge-count">
+        <span class="badge bg-primary rounded-pill" style="font-size: 0.75rem">{{
+          eventCount
+        }}</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- FullCalendar con padding migliorato -->
+<div class="calendar-container position-relative">
+  <div class="calendar-overlay"></div>
+  <div class="w-100 h-100">
+    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+  </div>
+</div>
+
+<style>
+  /* Stili moderni e puliti */
+  .calendar-icon-wrapper {
+    .icon-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05) rotate(5deg);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4) !important;
+      }
+    }
+  }
+
+  .filter-section {
+    .status-filter {
+      color: #495057;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+      &:focus {
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25) !important;
+        background: rgba(255, 255, 255, 1) !important;
+      }
+    }
+
+    .badge-count {
+      .badge {
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+      }
+    }
+
+    .filter-chip {
+      .badge {
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .calendar-container {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+
+    .calendar-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(102, 126, 234, 0.05));
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 20px;
+    }
+  }
+
+  /* FullCalendar ottimizzazioni */
+  :host ::ng-deep {
+    .fc {
+      border-radius: 20px !important;
+      overflow: hidden !important;
+
+      .fc-toolbar {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 16px 16px 0 0 !important;
+        margin-bottom: 0 !important;
+        padding: 1rem !important;
+      }
+
+      .fc-button {
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        text-transform: none !important;
+      }
+
+      .fc-button-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        border: none !important;
+      }
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .filter-section {
+      .input-group {
+        min-width: 160px;
+      }
+    }
+  }
+</style>

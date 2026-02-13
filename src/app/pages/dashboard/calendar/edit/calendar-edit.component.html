@@ -1,0 +1,471 @@
+<!-- HEADER CON ICONA CENTRALE -->
+<div class="d-flex justify-content-center align-items-center mb-5 position-relative">
+  <div class="event-icon-wrapper text-center">
+    <div class="icon-circle bg-primary bg-gradient shadow-lg">
+      <i class="fas fa-edit fa-2x text-white"></i>
+    </div>
+  </div>
+</div>
+
+<!-- Loading opzionale -->
+@if (!event) {
+  <div class="text-center py-5">
+    <div
+      class="spinner-border spinner-border-lg text-primary shadow-lg"
+      style="width: 4rem; height: 4rem"
+    ></div>
+    <p class="mt-3 text-muted fw-medium">Caricamento evento...</p>
+  </div>
+}
+
+<!-- FORM AGGIORNA EVENTO -->
+@if (event) {
+  <div class="event-form-container position-relative">
+    <div class="form-overlay"></div>
+
+    <form (ngSubmit)="update()" class="event-form">
+      <div class="row g-4">
+        <!-- NOME -->
+        <div class="col-lg-6">
+          <div class="form-group-wrapper mb-4">
+            <label class="form-label fw-bold mb-3">
+              <i class="fas fa-user text-primary me-2"></i>
+              Nome
+            </label>
+            <div class="input-wrapper position-relative">
+              <input
+                type="text"
+                class="form-control form-control-lg profile-input"
+                [(ngModel)]="event.name"
+                name="name"
+                required
+                readonly
+              />
+              <div class="input-icon">
+                <i class="fas fa-user"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="col-lg-6">
+          <div class="form-group-wrapper mb-4">
+            <label class="form-label fw-bold mb-3">
+              <i class="fas fa-envelope text-primary me-2"></i>
+              Email
+            </label>
+            <div class="input-wrapper position-relative">
+              <input
+                type="email"
+                class="form-control form-control-lg profile-input"
+                [(ngModel)]="event.email"
+                name="email"
+                required
+                readonly
+              />
+              <div class="input-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TITOLO -->
+        <div class="col-lg-6">
+          <div class="form-group-wrapper mb-4">
+            <label class="form-label fw-bold mb-3">
+              <i class="fas fa-heading text-primary me-2"></i>
+              Titolo evento
+            </label>
+            <div class="input-wrapper position-relative">
+              <input
+                type="text"
+                class="form-control form-control-lg profile-input"
+                [(ngModel)]="event.title"
+                name="title"
+                required
+                placeholder="Titolo dell'evento"
+              />
+              <div class="input-icon">
+                <i class="fas fa-heading"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DATA -->
+        <div class="col-lg-6">
+          <div class="form-group-wrapper mb-4">
+            <label class="form-label fw-bold mb-3">
+              <i class="fas fa-calendar-day text-primary me-2"></i>
+              Data
+            </label>
+            <div class="input-wrapper position-relative">
+              <input
+                type="date"
+                class="form-control form-control-lg profile-input"
+                [(ngModel)]="event.start"
+                name="start"
+                readonly
+                disabled
+              />
+              <div class="input-badge bg-secondary">
+                <i class="fas fa-lock"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STATO EVENTO (SOLO ADMIN) -->
+        @if (outletData()?.isAdmin) {
+          <div class="col-lg-12">
+            <div class="form-group-wrapper mb-4">
+              <label class="form-label fw-bold mb-3">
+                <i class="fas fa-toggle-on text-primary me-2"></i>
+                Stato evento
+              </label>
+              <div class="input-wrapper position-relative">
+                <select
+                  class="form-control form-control-lg profile-input profile-select"
+                  [(ngModel)]="event.status"
+                  name="status"
+                >
+                  <option value="PENDING">⏳ In Attesa</option>
+                  <option value="APPROVED">✅ Approvato</option>
+                  <option value="CANCELLED">❌ Cancellato</option>
+                  <option value="REJECTED">🚫 Rifiutato</option>
+                </select>
+                <div class="input-icon">
+                  <i class="fas fa-toggle-on"></i>
+                </div>
+              </div>
+              <small class="text-muted mt-2 d-block">
+                <i class="fas fa-info-circle me-1"></i>
+                Modificabile solo dagli amministratori
+              </small>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- SEZIONE ALLEGATI -->
+      <div class="form-section mt-5 mb-5">
+        <div class="row g-4">
+          <!-- FILE ESISTENTI -->
+          @if (existingFiles.length > 0) {
+            <div class="col-12">
+              <label class="form-label fw-bold mb-4">
+                <i class="fas fa-paperclip text-primary me-2"></i>
+                File esistenti
+              </label>
+              <div class="row g-3">
+                @for (f of existingFiles; track f.name; let i = $index) {
+                  <div class="col-md-6 col-lg-4">
+                    <div
+                      class="file-item h-100 p-4 rounded-4 shadow border-0 position-relative overflow-hidden"
+                    >
+                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                        <!-- CLICK PER DOWNLOAD (non stretched-link) -->
+                        <div
+                          class="file-download flex-grow-1 me-3"
+                          (click)="downloadFile(f.url, f.name)"
+                          style="cursor: pointer"
+                        >
+                          <div
+                            class="fw-semibold mb-2 text-truncate d-block"
+                            style="max-width: 200px"
+                          >
+                            @if (f.name.toLowerCase().endsWith('.pdf')) {
+                              <i class="fas fa-file-pdf text-danger me-2"></i>
+                            } @else {
+                              <i class="fas fa-image text-info me-2"></i>
+                            }
+                            {{ f.name }}
+                          </div>
+                          <small class="text-muted">Clicca per scaricare</small>
+                        </div>
+
+                        <!-- CESTINO (adesso funziona!) -->
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger ms-2 flex-shrink-0 z-3 position-relative"
+                          style="z-index: 10"
+                          (click)="removeExistingFile(i); $event.stopPropagation()"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- NUOVI UPLOAD -->
+          <div class="col-12">
+            <label class="form-label fw-bold mb-3">
+              <i class="fas fa-cloud-upload-alt text-primary me-2"></i>
+              Aggiungi allegati
+            </label>
+            <div class="input-wrapper position-relative mb-4">
+              <input
+                type="file"
+                class="form-control form-control-lg profile-input"
+                multiple
+                accept="image/*,application/pdf"
+                (change)="onFilesSelected($event)"
+              />
+              <div class="input-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+              </div>
+            </div>
+            <small class="text-muted">
+              <i class="fas fa-info-circle me-1"></i>
+              PDF, JPG, PNG (max 10MB)
+            </small>
+          </div>
+
+          <!-- FILE SELEZIONATI -->
+          @if (selectedFiles.length > 0) {
+            <div class="col-12">
+              <label class="form-label fw-bold mb-3">
+                <i class="fas fa-list text-primary me-2"></i>
+                {{ selectedFiles.length }} file da caricare
+              </label>
+              <div class="row g-3">
+                @for (f of selectedFiles; track f.name; let i = $index) {
+                  <div class="col-md-6 col-lg-4">
+                    <div class="selected-file-item p-4 rounded-4 shadow border position-relative">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1 me-3">
+                          <div class="fw-semibold text-truncate d-block" style="max-width: 180px">
+                            <i class="fas fa-file me-2 text-muted"></i>
+                            {{ f.name }}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-danger rounded-3 px-3"
+                          (click)="removeFile(i)"
+                        >
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- BOTTONI AZIONE -->
+      <div class="text-center mt-5">
+        <div class="d-flex gap-4 justify-content-center flex-wrap">
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-lg px-5 py-3 shadow-lg rounded-4"
+            [routerLink]="['/calendar']"
+          >
+            <i class="fas fa-times me-2"></i>Annulla
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg px-5 py-3 shadow-xl rounded-4 position-relative overflow-hidden"
+          >
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Aggiornando...
+            } @else {
+              <i class="fas fa-save me-2"></i>Aggiorna evento
+            }
+            <div class="submit-glow"></div>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+}
+
+<style>
+  /* Icona evento (coerente con profilo) */
+  .event-icon-wrapper .icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .event-icon-wrapper .icon-circle:hover {
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4) !important;
+  }
+
+  /* Container form */
+  .event-form-container {
+    position: relative;
+  }
+
+  .form-overlay {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 24px;
+  }
+
+  .event-form {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Input uniformi con il profilo */
+  .profile-input {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(102, 126, 234, 0.3) !important;
+    border-radius: 16px !important;
+    padding: 1rem 1.5rem 1rem 3.5rem !important;
+    font-weight: 500;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .profile-input:focus {
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.25) !important;
+    border-color: rgba(102, 126, 234, 0.5) !important;
+    transform: translateY(-2px);
+  }
+
+  .profile-input:hover:not(:disabled) {
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.4);
+  }
+
+  /* Icone input */
+  .input-wrapper .input-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #667eea;
+    font-size: 1.1rem;
+    z-index: 3;
+  }
+
+  .input-wrapper .input-badge {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: white;
+  }
+
+  /* Sezioni */
+  .form-section {
+    padding: 3rem 0;
+    border-top: 1px solid rgba(102, 126, 234, 0.1);
+    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  }
+
+  /* Card file esistenti e selezionati */
+  .file-item,
+  .selected-file-item {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(102, 126, 234, 0.2) !important;
+    transition: all 0.3s ease;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+  }
+
+  .file-item:hover,
+  .selected-file-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Pulsanti azione (stile profilo) */
+  .profile-submit,
+  .btn.btn-primary.btn-lg,
+  .btn.btn-outline-secondary.btn-lg {
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+  }
+
+  .btn.btn-primary.btn-lg {
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3) !important;
+  }
+
+  .btn.btn-primary.btn-lg:hover:not(:disabled) {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 25px 60px rgba(102, 126, 234, 0.4) !important;
+  }
+
+  .submit-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn.btn-primary.btn-lg:hover .submit-glow {
+    left: 100%;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .event-icon-wrapper .icon-circle {
+      width: 70px;
+      height: 70px;
+    }
+
+    .row.g-4 > [class*='col-'] {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .profile-select {
+    background: rgba(255, 255, 255, 0.95) !important;
+    padding-left: 3.5rem !important; /* Spazio per icona */
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+  }
+
+  .profile-select:focus {
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.25) !important;
+    border-color: rgba(102, 126, 234, 0.5) !important;
+    transform: translateY(-2px);
+  }
+
+  .file-download {
+    transition: all 0.3s ease;
+  }
+
+  .file-download:hover {
+    color: #667eea !important;
+    transform: translateY(-1px);
+  }
+
+  .file-download:hover small {
+    color: #667eea !important;
+  }
+</style>
