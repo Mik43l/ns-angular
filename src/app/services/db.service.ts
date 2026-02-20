@@ -69,9 +69,9 @@ export class DbService {
     );
   }
 
-  async sendEmail(eventId: string) {
+  async sendEmail(eventId: string, mode: string = 'create') {
     await firstValueFrom(
-      this.http.post(`${environment.nodeUrl}/create-email`, { documentId: eventId }),
+      this.http.post(`${environment.nodeUrl}/send-email`, { documentId: eventId, mode: mode }),
     );
   }
 }

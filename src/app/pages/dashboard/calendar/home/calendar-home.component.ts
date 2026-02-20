@@ -24,7 +24,7 @@ import { FormsModule } from '@angular/forms';
 export class CalendarHomeComponent {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
-  selectedStatus: string = 'APPROVED';
+  selectedStatus: string = 'ALL';
   dateYearMonth: Date = new Date();
   eventCount: number = 0;
 
@@ -46,12 +46,9 @@ export class CalendarHomeComponent {
     private route: ActivatedRoute,
     private router: Router,
     private db: DbService,
-    private auth: AuthService
+    private auth: AuthService,
   ) {
-    this.db.loadEvents(this.dateYearMonth).subscribe((events) => {
-      this.eventCount = events.total;
-      this.calendarOptions = { ...this.calendarOptions, events: events.documents };
-    });
+    this.reloadEvents();
   }
 
   reloadEvents() {

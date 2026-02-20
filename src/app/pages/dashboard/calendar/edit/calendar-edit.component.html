@@ -118,35 +118,35 @@
         </div>
 
         <!-- STATO EVENTO (SOLO ADMIN) -->
-        @if (outletData()?.isAdmin) {
-          <div class="col-lg-12">
-            <div class="form-group-wrapper mb-4">
-              <label class="form-label fw-bold mb-3">
-                <i class="fas fa-toggle-on text-primary me-2"></i>
-                Stato evento
-              </label>
-              <div class="input-wrapper position-relative">
-                <select
-                  class="form-control form-control-lg profile-input profile-select"
-                  [(ngModel)]="event.status"
-                  name="status"
-                >
-                  <option value="PENDING">⏳ In Attesa</option>
-                  <option value="APPROVED">✅ Approvato</option>
-                  <option value="CANCELLED">❌ Cancellato</option>
-                  <option value="REJECTED">🚫 Rifiutato</option>
-                </select>
-                <div class="input-icon">
-                  <i class="fas fa-toggle-on"></i>
-                </div>
+
+        <div class="col-lg-12">
+          <div class="form-group-wrapper mb-4">
+            <label class="form-label fw-bold mb-3">
+              <i class="fas fa-toggle-on text-primary me-2"></i>
+              Stato evento
+            </label>
+            <div class="input-wrapper position-relative">
+              <select
+                class="form-control form-control-lg profile-input profile-select"
+                [(ngModel)]="event.status"
+                name="status"
+                [disabled]="!outletData()?.isAdmin"
+              >
+                <option value="PENDING">⏳ In Attesa</option>
+                <option value="APPROVED">✅ Approvato</option>
+                <option value="CANCELLED">❌ Cancellato</option>
+                <option value="REJECTED">🚫 Rifiutato</option>
+              </select>
+              <div class="input-icon">
+                <i class="fas fa-toggle-on"></i>
               </div>
-              <small class="text-muted mt-2 d-block">
-                <i class="fas fa-info-circle me-1"></i>
-                Modificabile solo dagli amministratori
-              </small>
             </div>
+            <small class="text-muted mt-2 d-block">
+              <i class="fas fa-info-circle me-1"></i>
+              Modificabile solo dagli amministratori
+            </small>
           </div>
-        }
+        </div>
       </div>
 
       <!-- SEZIONE ALLEGATI -->

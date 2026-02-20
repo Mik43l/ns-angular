@@ -118,7 +118,7 @@ export class CalendarEditComponent implements OnInit {
     if (this.removedExistingFileIds.length === 0 && this.selectedFiles.length === 0) {
       if (this.event.title !== title || this.event.status !== status) {
         await this.db.updateEvent(this.event.id, this.event.title, this.event.status, documents);
-        await this.db.sendEmail(this.event.id);
+        await this.db.sendEmail(this.event.id, 'update');
       }
     }
 
