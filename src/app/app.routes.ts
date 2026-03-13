@@ -6,6 +6,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { CalendarComponent } from './pages/dashboard/calendar/calendar.component';
 import { CalendarCreateComponent } from './pages/dashboard/calendar/create/calendar-create.component';
 import { ProfileComponent } from './pages/dashboard/profile/profile.component';
+import { GalleryComponent } from './pages/dashboard/gallery/gallery.component';
 import { UsersListComponent } from './pages/dashboard/users/users-list.component';
 
 import { authGuard } from './auth-guard';
@@ -32,6 +33,10 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: ProfileComponent,
+      },
+      {
+        path: 'gallery',
+        component: GalleryComponent,
       },
       {
         path: 'users',
