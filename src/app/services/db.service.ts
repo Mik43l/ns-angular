@@ -19,8 +19,12 @@ export class DbService {
   }
 
   loadEvents(date: Date, status: string = 'APPROVED') {
-    const query = [Query.contains('start', this.formatDateYYYYMM(date))];
-    if (status !== 'ALL') query.push(Query.equal('status', status));
+    let query = [
+      Query.contains('start', this.formatDateYYYYMM(date)),
+      Query.notEqual('status', 'CANCELLED'),
+    ];
+    if (status !== 'ALL')
+      query = [Query.contains('start', this.formatDateYYYYMM(date)), Query.equal('status', status)];
     return from(
       databases.listDocuments(
         environment.databaseId, // databaseId
