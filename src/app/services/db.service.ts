@@ -29,7 +29,7 @@ export class DbService {
       databases.listDocuments(
         environment.databaseId, // databaseId
         environment.eventsCollectionId, // collectionId
-        [...query], // queries (optional)
+        [...query, Query.limit(199)], // queries (optional)
       ),
     );
   }
