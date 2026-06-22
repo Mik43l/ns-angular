@@ -526,6 +526,14 @@ export class GalleryComponent implements OnInit {
         type: 'image',
         path: '/gallery/82.jpeg',
       },
+      { id: '83', title: '83.jpeg', type: 'image', path: '/gallery/83.jpeg' },
+      { id: '84', title: '84.jpeg', type: 'image', path: '/gallery/84.jpeg' },
+      { id: '85', title: '85.jpeg', type: 'image', path: '/gallery/85.jpeg' },
+      { id: '86', title: '86.jpeg', type: 'image', path: '/gallery/86.jpeg' },
+      { id: '87', title: '87.jpeg', type: 'image', path: '/gallery/87.jpeg' },
+      { id: '88', title: '88.jpeg', type: 'image', path: '/gallery/88.jpeg' },
+      { id: '89', title: '89.jpeg', type: 'image', path: '/gallery/89.jpeg' },
+      { id: '90', title: '90.mp4', type: 'video', path: '/gallery/90.mp4' },
     ];
     this.loading = false;
   }
